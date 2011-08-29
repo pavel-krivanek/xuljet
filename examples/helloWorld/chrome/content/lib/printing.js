@@ -22,7 +22,7 @@ exports.utils = {
         PSSVC.savePrintSettingsToPrefs(printSettings, true, printSettings.kInitSaveNativeData);
       }
     } catch (e) {
-      dumpMessage('showPageSetup '+e+'\n');
+      xuljet.dumpMessage('showPageSetup '+e+'\n');
       return false;
     }
     return true;
@@ -48,7 +48,7 @@ exports.utils = {
                                        printSettings.kInitSavePrinterName);
       }
     } catch (e) {
-      dumpMessage(e);
+      xuljet.dumpMessage(e);
       // Pressing cancel is expressed as an NS_ERROR_ABORT return value,
       // causing an exception to be thrown which we catch here.
       // Unfortunately this will also consume helpful failures, so add a

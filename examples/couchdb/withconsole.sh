@@ -1,3 +1,3 @@
 #!/bin/bash
 
-xulrunner application.ini -jsconsole
+$(dirname $0)/without.sh -jsconsole

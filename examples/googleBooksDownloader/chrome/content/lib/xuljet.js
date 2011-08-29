@@ -377,9 +377,9 @@ exports.getProperty = function(receiver, propertyNameOrClosure)
 
 exports.inspect = function(obj)
 {
-  dumpMessage("-----------");
+  exports.dumpMessage("-----------");
   for (prop in obj) exports.dumpMessage(prop + ": " + obj[prop]); 
-  dumpMessage("-----------");
+  exports.dumpMessage("-----------");
 }
 
 exports.selectedListItem = function(listboxElement)

@@ -1,6 +1,3 @@
-// uncomment this lines for JSHint check
-// function require(){}function parseXML(){} var XULElement,HTMLElement,SVGElement,Element,Text,XMLSerializer,Components,exports,KeyEvent,DOMParser;
-
 var printing = require('./printing');
 
 // constants with URIs of XML namespaces
@@ -27,7 +24,7 @@ var getBaseURI = function()
 {
   var uri = document.documentURI;
   return uri.slice(0, uri.indexOf('/templates/main.xul')) + '/';
-};
+}
 
 // Default URIs
 
@@ -48,7 +45,7 @@ exports.dumpMessage = function(aString)
   var cls = Components.classes['@mozilla.org/consoleservice;1']; 
   var service = cls.getService(Components.interfaces.nsIConsoleService); 
   service.logStringMessage(aString);
-};
+}
 
 /**
  * Writes the code of an element to the JavaScript Console
@@ -61,7 +58,7 @@ exports.dumpElement = function(element)
   var serializer = new XMLSerializer();
   var xml = serializer.serializeToString(element);
   exports.dumpMessage(xml);
-};
+}
 
 /**
  * Returns a translated string specified by an identifier.
@@ -94,21 +91,22 @@ exports.str = function(aStringName, var_args)
     return aStringName;
   try {
     if (arguments.length == 1)
-      return exports.locale.stringbundle.getString(aStringName);
+      return exports.locale.stringbundle.getString(aStringName)
 
     var args = Array.prototype.slice.call(arguments);
     args.shift();
     
     return exports.locale.stringbundle.getFormattedString(aStringName, args);
   } catch (e) {
-    return aStringName;
+    return aStringName
   }
-};
+}
 
 exports.lstr = function(aStringName)
 {
-  return exports.str.apply(this, arguments) + ':';
-};
+  return str.apply(this, arguments) + ':';
+}
+
 
 function bindJs_(fn, selfObj, var_args) {
   var context = selfObj || window;
@@ -127,11 +125,11 @@ function bindJs_(fn, selfObj, var_args) {
       return fn.apply(context, arguments);
     };
   }
-}
+};
 
 function bindNative_(fn, selfObj, var_args) {
   return /** @type {!Function} */ (fn.call.apply(fn.bind, arguments));
-} 
+};  
 
 exports.bind = function(fn, selfObj, var_args) {
   if (Function.prototype.bind &&
@@ -145,7 +143,7 @@ exports.bind = function(fn, selfObj, var_args) {
 
 exports.inherits = function(childCtor, parentCtor) {
   /** @constructor */
-  function tempCtor() {}
+  function tempCtor() {};
   tempCtor.prototype = parentCtor.prototype;
   childCtor.superClass_ = parentCtor.prototype;
   childCtor.prototype = new tempCtor();
@@ -212,7 +210,7 @@ window._XULJetClosureRegistry.add = function(aClosure)
   var uid = 'closure' + window._XULJetClosureRegistry.lastUID.toString();
   window._XULJetClosureRegistry.registry[uid] = aClosure;
   return uid;
-};
+}
 
 /**
  * Generates an unique identificator for general purposes
@@ -222,7 +220,7 @@ window._XULJetClosureRegistry.add = function(aClosure)
 exports.id = function() {
   exports.id.lastUID++;
   return 'XULID_' + exports.id.lastUID.toString();
-};
+}
 exports.id.lastUID = 0;
 
 
@@ -234,78 +232,79 @@ exports.firstDayOfWeek = function()
     return 0;
   }
   return 1;
-};
+}
 
 // AbstractCanvas
 
 exports.AbstractCanvas = function(parentCanvas, aComponent) 
 {
-  this.nodes = parentCanvas ? parentCanvas.nodes : [];
+  this.nodes = parentCanvas ? parentCanvas.nodes : new Array();
   this.component = aComponent;
   this.automaticProperties = false;
-}; 
+} 
 
 exports.AbstractCanvas.prototype.roots = function()
 {
   return this.nodes.filter(function(each) {
-    return each.parentNode === undefined;
+    return each.parentNode == undefined
   });
-};
+}
   
 exports.AbstractCanvas.prototype.XUL = function()
 {
-  return new exports.XULCanvas(this, this.component);
-};
+  return new exports.XULCanvas(this, this.component)
+}
   
 exports.AbstractCanvas.prototype.HTML = function()
 {
-  return new exports.HTMLCanvas(this, this.component);
-};
+  return new exports.HTMLCanvas(this, this.component)
+}
 
 exports.AbstractCanvas.prototype.SVG = function()
 {
-  return new exports.SVGCanvas(this, this.component);
-};
+  return new exports.SVGCanvas(this, this.component)
+}
 
 exports.AbstractCanvas.prototype.insertNodes = function(nodes)
 {
   nodes.isElementsCollection = true;
-  nodes.forEach(function(each) {this.nodes.push(each);}, this);
+  nodes.forEach(function(each) {this.nodes.push(each)}, this)
   return nodes;
-};
+}
 
 exports.AbstractCanvas.prototype.insert = function(aClosure, arg)
 {
-  var embeddedCanvas = new this.constructor(null, this.component);
-  var boundClosure = exports.bind(aClosure, this.component);
+  var embeddedCanvas = new this.constructor(null, this.component)
+  var boundClosure = exports.bind(aClosure, this.component)
   boundClosure(embeddedCanvas, arg);
   var roots = embeddedCanvas.roots();
   
   roots.isElementsCollection = true;
-  roots.forEach(function(each) {this.nodes.push(each);}, this);
+  roots.forEach(function(each) {this.nodes.push(each)}, this)
   return roots;
-};
+} 
 
 exports.AbstractCanvas.prototype.insertSVGFile = function(anURI)
 {
-  return this.insertNodes([parseXML(exports.getContents(anURI)).documentElement]);
-};
+  return this.insertNodes([parseXML(exports.getContents(anURI)).documentElement])
+}
 
 exports.AbstractCanvas.prototype.collect = function(aCollection, aClosure)
 {
-  var boundClosure = exports.bind(aClosure, this.component);
+  var boundClosure = exports.bind(aClosure, this.component)
   return this.insert(function(_xul) {
-    aCollection.forEach(function(item, index) {
-      boundClosure(_xul, item, index);});});
-};
+  aCollection.forEach(function(item, index) {
+    boundClosure(_xul, item, index)})})
+}
 
 // XULCanvas
 
 exports.XULCanvas = function(parentCanvas, aComponent)
 {
   exports.AbstractCanvas.call(this, parentCanvas, aComponent);
-};
+}
 exports.inherits(exports.XULCanvas, exports.AbstractCanvas);
+
 
 exports.XULCanvas.prototype.sectionStart = function(id)
 {
@@ -314,7 +313,7 @@ exports.XULCanvas.prototype.sectionStart = function(id)
   var result = this.description({hidden: true, id: '__start_'+id });
   this.automaticProperties = oldSetting;
   return result;
-};
+}
   
 exports.XULCanvas.prototype.sectionEnd = function(id)
 {
@@ -323,72 +322,72 @@ exports.XULCanvas.prototype.sectionEnd = function(id)
   var result = this.description({hidden: true, id: '__end_'+id });
   this.automaticProperties = oldSetting;
   return result;
-};
+}
   
 exports.XULCanvas.prototype.formStart = function(id)
 {
-  return this.sectionStart(id);
-};
+  return this.sectionStart(id)
+}
   
 exports.XULCanvas.prototype.formEnd = function(id)
 {
-  return this.sectionEnd(id);
-};
+  return this.sectionEnd(id)
+}
   
 exports.XULCanvas.prototype.formlistbox = function(attributes, collection, object, property)
 {
   return (this.listbox(attributes, 
     this.collect(collection, function(_xul, item, index) {
-      _xul.listitem({label: item, 'xuljet:value': index, selected: (object[property].indexOf(item)>=0)});})
-    )).attach(collection).on(object, property);
-};
+      _xul.listitem({label: item, 'xuljet:value': index, selected: (object[property].indexOf(item)>=0)})})
+    )).attach(collection).on(object, property)
+}
 
 exports.XULCanvas.prototype.formmenulist = function(attributes, collection, object, property)
 {
   return (this.menulist(attributes, this.menupopup(( 
     this.collect(collection, function(_xul, item, index) {
-      _xul.menuitem({label: item, 'xuljet:value': index, selected: (item == object[property])});})
-    ))).attach(collection).on(object, property));
-};
+      _xul.menuitem({label: item, 'xuljet:value': index, selected: (item == object[property])})})
+    ))).attach(collection).on(object, property))
+}
 
 exports.XULCanvas.prototype.formradiogroup = function(attributes, collection, object, property)
 {
   return (this.radiogroup(attributes, 
   this.collect(collection, function(_xul, item, index) {
-    _xul.radio({label: item, 'xuljet:value': index, selected: (object[property].indexOf(item)>=0)});})
-  )).attach(collection).on(object, property);
-};
+    _xul.radio({label: item, 'xuljet:value': index, selected: (object[property].indexOf(item)>=0)})})
+  )).attach(collection).on(object, property)
+}
 
 exports.getProperty = function(receiver, propertyNameOrClosure)
 {
-  if (!propertyNameOrClosure) return receiver;
+  if (!propertyNameOrClosure) return object;
   
   if (typeof propertyNameOrClosure == 'function')
   {
-    return propertyNameOrClosure(receiver);
+    return propertyNameOrClosure(receiver)
   }
   
   var splitted = propertyNameOrClosure.split('.');
   var obj = receiver;
   splitted.forEach(function (each) {
-    obj = obj[each];
-  });
+    obj = obj[each]
+  })
   return obj;
-};
+}
 
 exports.inspect = function(obj)
 {
   exports.dumpMessage("-----------");
-  for (var prop in obj) exports.dumpMessage(prop + ": " + obj[prop]); 
+  for (prop in obj) exports.dumpMessage(prop + ": " + obj[prop]); 
   exports.dumpMessage("-----------");
-};
+}
 
 exports.selectedListItem = function(listboxElement)
 {
-  var collection = listboxElement.attachedObjects.attachedObject;
+  var collection = listboxElement.attachedObjects['attachedObject'];
   var index = listboxElement.selectedItem.getAttribute('xuljet:value');
   return collection[parseInt(index, 10)];
-};
+}
 
 exports.XULCanvas.prototype.list = function(listboxAttributes, aCollection, columns, onSelect, contextMenuId)
 {
@@ -396,17 +395,17 @@ exports.XULCanvas.prototype.list = function(listboxAttributes, aCollection, colu
   attribs.onselect = this.component.$C(function(listboxElement) {
     if (onSelect && listboxElement.selectedItem)
     {
-      var val = exports.selectedListItem(listboxElement);
-      onSelect.call(this.component, val);
+      var val = exports.selectedListItem(listboxElement)
+      onSelect.call(this.component, val)
     }
-  });
+  })
   
   return (this.listbox(attribs,
     this.listcols(
       this.collect(columns, function(_xul, column, index) {
         _xul.listcol({flex: 1});
         if (index != columns.length-1)
-          _xul.splitter({'class': 'tree-splitter'});})), 
+          _xul.splitter({class: 'tree-splitter'})})), 
                    
     this.listhead(
       this.collect(columns, function(_xul, column) {
@@ -419,10 +418,10 @@ exports.XULCanvas.prototype.list = function(listboxAttributes, aCollection, colu
         attribs.context = contextMenuId;
       _xul.listitem(attribs, 
         _xul.collect(columns, function(__xul, column, columnIndex) {
-          __xul.label({value: exports.getProperty(item, column.property)});
-          }));
-  }))).attach(aCollection);
-};
+          __xul.label({value: exports.getProperty(item, column.property)})
+          }))
+  }))).attach(aCollection)   
+}
 
 exports.XULCanvas.prototype.tags = ['action', 'assign', 'bbox', 'binding', 'bindings', 'box', 'broadcasterset', 
   'broadcaster', 'browser', 'caption', 'colorpicker', 'column', 'columns', 'commandset', 'command', 
@@ -450,7 +449,7 @@ exports.HTMLCanvas = function(parentCanvas, aComponent)
 {
   exports.AbstractCanvas.call(this, parentCanvas, aComponent);
   this.nodes = parentCanvas ? parentCanvas.nodes : [];
-};
+}
 exports.inherits(exports.HTMLCanvas, exports.AbstractCanvas);
 
 exports.HTMLCanvas.prototype.tags = ['abbr', 'acronym', 'address', 'applet', 'area', 'article', 'aside', 'audio', 
@@ -483,7 +482,7 @@ exports.SVGCanvas = function(parentCanvas, aComponent)
 {
   exports.AbstractCanvas.call(this, parentCanvas, aComponent);
   this.nodes = parentCanvas ? parentCanvas.nodes : [];
-};
+}
 exports.inherits(exports.SVGCanvas, exports.AbstractCanvas);
 
 exports.SVGCanvas.prototype.tags = [
@@ -505,23 +504,23 @@ exports.SVGCanvas.prototype.tags = [
 
 exports.isAttributes = function(attrs)
 {
-  return (typeof attrs == 'object') && 
-    !(attrs instanceof XULElement) && 
-    !(attrs instanceof HTMLElement) && 
-    !(attrs instanceof SVGElement) && 
-    !(attrs instanceof Text) && 
-    !(attrs instanceof Array) && 
-    !(attrs.isElementsCollection);
-};
+  return (typeof attrs == 'object') 
+  && !(attrs instanceof XULElement) 
+  && !(attrs instanceof HTMLElement) 
+  && !(attrs instanceof SVGElement) 
+  && !(attrs instanceof Text) 
+  && !(attrs instanceof Array) 
+  && !(attrs.isElementsCollection);
+}
 
 exports.isElement = function(anObject)
 {
-  return anObject instanceof Element ||
-    anObject instanceof Text ||
-    anObject instanceof XULElement ||
-    anObject instanceof HTMLElement ||
-    anObject instanceof SVGElement;
-};
+  return anObject instanceof Element 
+    || anObject instanceof Text 
+    || anObject instanceof XULElement 
+    || anObject instanceof HTMLElement 
+    || anObject instanceof SVGElement 
+}
 
 exports.processAttribute = function(aNode, key, value, aCanvas)
 {
@@ -531,19 +530,21 @@ exports.processAttribute = function(aNode, key, value, aCanvas)
     var oldValue = value;
     value = function(element, event) {
       if (event.keyCode == KeyEvent.DOM_VK_RETURN) 
-        this.$(oldValue).doCommand();
-    };     
+        this.$(oldValue).doCommand()
+    }     
   }
 
   if (key == 'link')
   {
+    var currentValue;
+    
     var splitted = value[1].split('.');
     var currentValue = value[0];
     splitted.forEach(function (each) {
-      currentValue = currentValue[each];
-    });   
+      currentValue = currentValue[each]
+    })   
   
-    var safeCurrentValue = (currentValue === undefined || currentValue === null) ? '' : currentValue;
+    var safeCurrentValue = (currentValue == undefined || currentValue == null) ? '' : currentValue;
       
     aNode.setAttribute('xuljet:name', value[1]);
     switch (aNode.tagName)
@@ -561,7 +562,7 @@ exports.processAttribute = function(aNode, key, value, aCanvas)
         aNode.setAttribute('dateValue', currentValue); 
         break;
      default:  
-        aNode.setAttribute('value', currentValue);
+        aNode.setAttribute('value', currentValue)
     }
     aNode.setFormReceiver(value);
     return;
@@ -571,63 +572,66 @@ exports.processAttribute = function(aNode, key, value, aCanvas)
   
   if ((key == 'bind') || (key == 'id' && aCanvas.automaticProperties))
   {
-    aNode.bindProperty(aCanvas.component, value);
+    aNode.bindProperty(aCanvas.component, value)
     aCanvas.component[value] = aNode;
   }
   
   if (typeof val == 'function')
     val = aCanvas.component.$C(val);
   
-  aNode.setAttribute(key, val);
-};
+  aNode.setAttribute(key, val)
+}
 
 exports.makeTagHelper = function(namespace, prefix, tagName)
 {
-  return function(attrs) {
-    var node = document.createElementNS(namespace, prefix + tagName);
-    var firstArgIsAttributes = exports.isAttributes(attrs);
-    
-    if (firstArgIsAttributes)
-      for (var key in attrs)
-        exports.processAttribute(node, key, attrs[key], this);
+  return function(attrs)
+  {
+  var node = document.createElementNS(namespace, prefix + tagName);
+  var firstArgIsAttributes = exports.isAttributes(attrs);
+  
+  if (firstArgIsAttributes)
+    for (var key in attrs)
+      exports.processAttribute(node, key, attrs[key], this);
 
-    var startIndex = firstArgIsAttributes ? 1 : 0;
-    
-    for (var i = startIndex; i < arguments.length; i++)
+  var startIndex = firstArgIsAttributes ? 1 : 0;
+  
+  for (var i = startIndex; i < arguments.length; i++)
+  {
+    var arg = arguments[i];
+    if (typeof arg == 'string' || arg == undefined)
+      arg = document.createTextNode(arg || '');
+    if (exports.isElement(arg))
     {
-      var arg = arguments[i];
-      if (typeof arg == 'string' || arg === undefined)
-        arg = document.createTextNode(arg || '');
-      if (exports.isElement(arg)) {
-        arg.parent = node;
-      }
-
-      if (arg.isElementsCollection)
-      for (var j = 0; j < arg.length; j++)
-      {
-        if (arg[j])
-          node.appendChild(arg[j]);
-      }
-      else
-        node.appendChild(arg);
+      arg.parent = node;
     }
-    
-    this.nodes.push(node);
-    return node;
+
+    if (arg.isElementsCollection)
+    for (var j = 0; j < arg.length; j++)
+    {
+      if (arg[j])
+        node.appendChild(arg[j]);
+    }
+    else
+      node.appendChild(arg);
   };
-};
+  
+  this.nodes.push(node);
+  return node;
+  };
+}
 
 exports.XULCanvas.prototype.section = function(attrs)
 {
   var firstArgIsAttributes = exports.isAttributes(attrs);
   
-  var children = [];
+  var children = []
   
   var id;
   if (firstArgIsAttributes)
-  for (var key in attrs) {
+  for (var key in attrs)
+  {
     if (key == 'id')
-      id = attrs[key];
+    id = attrs[key]
   }
   if (!id) id = exports.id();
   
@@ -635,26 +639,26 @@ exports.XULCanvas.prototype.section = function(attrs)
   this.automaticProperties = false;
   var result = this.description({hidden: true, id: '__start_'+id });
   this.automaticProperties = oldSetting;
-  children.push(result);
+  children.push(result)
   
   var startIndex = firstArgIsAttributes ? 1 : 0;
 
   for (var i = startIndex; i < arguments.length; i++)
   {
     var arg = arguments[i];
-    if (typeof arg == 'string' || arg === undefined)
+    if (typeof arg == 'string' || arg == undefined)
       arg = document.createTextNode(arg || '');
     if (exports.isElement(arg) )
     {
-      children.push(arg);
+      children.push(arg)
     }
 
     if (arg.isElementsCollection)
       for (var j = 0; j < arg.length; j++)
-        children.push(arg[j]);
+        children.push(arg[j])
     else
       children.push(arg);
-  }
+  };
 
   oldSetting = this.automaticProperties;
   this.automaticProperties = false;
@@ -674,27 +678,20 @@ exports.makeTagHelpers = function(canvasClass, namespace, prefix)
   for (var i = tags.length - 1; i >= 0; i--)
   {
     var tagName = tags[i];
-    canvasClass.prototype[tagName] = exports.makeTagHelper(namespace, prefix, tagName);
-  }
-};
+    canvasClass.prototype[tagName] = exports.makeTagHelper(namespace, prefix, tagName)
+  };
+}
   
-var attachObject = function(tag, propertyName, object)
-{
-  if (!tag.getAttribute('xuljet:attachedObjects'))
-    tag.setAttribute('xuljet:attachedObjects', exports.id());
-  if (!tag.attachedObjects) tag.attachedObjects = {};
-  tag.attachedObjects[propertyName] = object;
-  return tag;
-};
-
 exports.extend(Element.prototype, {
   on: function(obj, property)
   {
+    var currentValue;
+    
     var splitted = property.split('.');
     var currentValue = obj;
     splitted.forEach(function (each) {
-      currentValue = currentValue[each];
-    });
+      currentValue = currentValue[each]
+    })      
     
     this.setAttribute('xuljet:name', property);
     switch (this.tagName)
@@ -709,7 +706,7 @@ exports.extend(Element.prototype, {
         this.setAttribute('dateValue', currentValue); 
         break;
       default:  
-        this.setAttribute('value', currentValue);
+        this.setAttribute('value', currentValue)
     }
     this.setFormReceiver([obj, property]);
     
@@ -719,19 +716,19 @@ exports.extend(Element.prototype, {
   attach: function(obj, propertyName)
   {
     var property = propertyName ? propertyName : 'attachedObject';
-    return attachObject(this, property, obj);
+    return attachObject(this, property, obj)
   },
 
   bindProperty: function(obj, propertyName)
   {
-    return attachObject(this, 'propertyBinding', {object: obj, property: propertyName});
+    return attachObject(this, 'propertyBinding', {object: obj, property: propertyName})
   },  
   
   setFormReceiver: function(obj)
   {
-    return attachObject(this, 'formReceiver', obj);
+    return attachObject(this, 'formReceiver', obj)
   }
-});
+})
 
 // Component
 
@@ -741,38 +738,38 @@ exports.Component = function(aWindow)
   this.registeredClosures = [];
   this.window = aWindow;
   this.localesPackageName = undefined;
-};
+}
  
 exports.Component.prototype.children = function()
 {
   return [];
-};
+} 
  
 exports.Component.prototype.clearClosures = function()
 {
   this.registeredClosures.forEach(function(each) {
-    delete window._XULJetClosureRegistry.registry.each;});
+  delete window._XULJetClosureRegistry.registry.each});
   this.registeredClosures = [];
-};
+}
 
 exports.Component.prototype.setWindow = function(aWindow)
 {
   this.window = aWindow;
   this.children().forEach(function (each) {
-    each.setWindow(aWindow);});
-};
+    each.setWindow(aWindow)});
+},
 
 exports.Component.prototype.ID = function(aString)
 {
   if (!this._ids) this._ids = {};
   
   var result = this._ids[aString];
-  if (result !== undefined) return result;
+  if (result != undefined) return result;
   
   result = exports.id();
   this._ids[aString] = result;
   return result;
-};
+}
 
 exports.Component.prototype.$C = function(aClosure)
 {
@@ -780,7 +777,7 @@ exports.Component.prototype.$C = function(aClosure)
   var closureId = window._XULJetClosureRegistry.add(boundClosure);
   this.registeredClosures.push(closureId);
   return 'if(typeof event == \'undefined\') (window._XULJetClosureRegistry.registry["'+closureId+'"])(this, undefined); else (window._XULJetClosureRegistry.registry["'+closureId+'"])(this, event)';
-};
+}
   
 exports.Component.prototype.$ = function(element) 
 {
@@ -792,42 +789,244 @@ exports.Component.prototype.$ = function(element)
   if (typeof element == 'string')
     element = this.window.document.getElementById(element);
   return element;
-};
+}
 
-var localeURI = function(packageName, localeName)
+exports.Component.prototype.str = function(aStringName)
 {
-  return exports.localesURI + packageName + '.' + localeName + '.txt';
-};
+  if (!aStringName) return '';
+  if (!exports.locale.stringbundle || !this.localesPackageName)
+    return aStringName;
 
-var getStringBundle = function(localeName, fallbackLocale, packageName)
-{
-  var currentLocale = localeName;
-  var bundleId = '__' + packageName + '_stringbundle';
-  var mainWindow = exports.Window.main;
-  if (!mainWindow)
-    mainWindow = window;
+  var stringBundle = getStringBundle(exports.locale.name, exports.locale.fallbacklocale, this.localesPackageName)
+
+  if (!stringBundle)
+    return aStringName;
+
+  if (!stringBundle.getAttribute('src'))
+    return aStringName;
   
-  var stringBundle = mainWindow.document.getElementById(bundleId);
-  if (stringBundle)
-    return stringBundle;    
+  try {
+    if (arguments.length == 1)
+      return stringBundle.getString(aStringName)
+
+    var args = Array.prototype.slice.call(arguments);
+    args.shift();
     
-  if (!exports.urlExists(localeURI(packageName, currentLocale)))
-  {
-    currentLocale = fallbackLocale;
-    if (!exports.urlExists(localeURI(packageName, currentLocale)))
-      currentLocale = undefined;
+    return stringBundle.getFormattedString(aStringName, args);
+  } catch (e) {
+    return aStringName
   }
+}
+
+exports.Component.prototype.lstr = function(aStringName)
+{
+  return this.str.apply(this, arguments) + ':';
+}
+
+exports.Component.prototype.render = function(xul)
+{
+}
+
+exports.Component.prototype.finishRendering = function()
+{
+}
+
+exports.Component.prototype.finishRenderingWithChildren = function()
+{
+  this.finishRendering();
+  this.children().forEach(function (each) {
+    each.finishRenderingWithChildren()});
+}
+
+exports.Component.prototype.rendered = function()
+{
+  this.clearClosures();
+  var xul = new exports.XULCanvas(null, this); 
+  xul.sectionStart(this.id);
+  this.render(xul);
+  xul.sectionEnd(this.id);
+  var roots = xul.roots();
+  roots.isElementsCollection = true;
+  return roots;
+}  
   
-  var finalURI = currentLocale ? localeURI(packageName, currentLocale) : '';
-    
-  var node = exports.Window.main.document.createElementNS(exports.XUL_NS, 'stringbundle');
-  node.setAttribute('id', bundleId);
-  node.setAttribute('src', finalURI);
-  stringBundle = node.cloneNode(true);
-  exports.Window.main.rootNode().appendChild(stringBundle);
+exports.Component.prototype.refresh = function()
+{
+  var roots = this.rendered();
+  replaceComponentInDocument(this.window.document, this.id, roots)
+  this.finishRenderingWithChildren();
+}
   
-  return stringBundle;
-};
+exports.Component.prototype.replace = function(oldComponent)
+{
+  var roots = this.rendered();
+  oldComponent.clearClosures();
+  replaceComponentInDocument(this.window.document, oldComponent.id, roots)
+  this.finishRenderingWithChildren();
+}
+  
+exports.Component.prototype.remove = function()
+{
+  this.clearClosures();
+  replaceComponentInDocument(this.window.document, this.id, [])
+}
+  
+exports.Component.prototype.refreshSection = function(id, aClosure )
+{
+  var boundClosure = exports.bind(aClosure, this)
+  var xul = new exports.XULCanvas(null, this); 
+  xul.sectionStart(id);
+  boundClosure(xul);
+  xul.sectionEnd(id);
+  var roots = xul.roots();
+  roots.isElementsCollection = true;
+  replaceComponentInDocument(this.window.document, id, roots)
+}
+  
+exports.Component.prototype.beMainWindowComponent = function()
+{
+  this.id = 'mainWindowComponent';
+  this.refresh();
+}
+  
+exports.Component.prototype.formValue = function(formId)
+{
+  return processFormInDocument(this.window.document, formId, false); 
+}
+
+exports.Component.prototype.processForm = function(formId)
+{
+  return processFormInDocument(this.window.document, formId, true); 
+}  
+
+exports.Component.prototype.reloadForm = function(formId)
+{
+  return reloadFormInDocument(this.window.document, formId); 
+}  
+  
+exports.Component.prototype.appendForm = function(formId, target)
+{
+  var obj = target? target : this;
+  exports.extend(obj, this.formValue(formId))
+}
+  
+exports.Component.prototype.print = function(aCanvas, modifyPrintSettingsCallback)
+{
+  if (printing.gPrintFrameId)
+    exports.Window.main.rootNode().removeChild(exports.Window.main.document.getElementById(printing.gPrintFrameId));
+
+  var frameId = exports.id();
+  var frame = document.createElementNS(exports.XUL_NS, 'iframe');
+  frame.setAttribute('type', 'content-primary');
+  frame.setAttribute('id', frameId);
+  frame.setAttribute('width', 1);
+  frame.setAttribute('height', 1);
+  frame.setAttribute('src', exports.baseURI+'templates/empty.html');
+  var clone = frame.cloneNode(true);
+  exports.Window.main.rootNode().appendChild(clone);
+  
+  replaceBodyInDocument(clone.contentWindow.document, aCanvas.roots())
+  
+  printing.utils.print(clone.contentWindow, modifyPrintSettingsCallback);
+  
+  printing.gPrintFrameId = frameId;
+  clone.hidden = true;
+  // NOTE: mozilla bug, if you delete iframe here, printing may not happen
+  //    this.window.rootNode().removeChild(clone);  
+}
+  
+exports.Component.prototype.alert = function(message)
+{
+  this.window.alert(message);
+}
+  
+exports.Component.prototype.prompt = function(text, value)
+{
+  return this.window.prompt(text, value);
+}
+
+exports.Component.prototype.confirm = function(text)
+{
+  return this.window.confirm(text);
+}
+
+exports.defaultProgressListener = function()
+{
+  // from http://mdn.beonex.com/en/XUL_Questions_and_Answers#What_is_an_example_of_addProgressListener.3f
+  // use:
+  //   var listObj = xuljet.defaultProgressListener();
+  //   listObj.onFinish = function() {alert("finish")}
+  //     browserObj.addProgressListener( listObj, Components.interfaces.nsIWebProgress.NOTIFY_STATE_WINDOW );
+
+  var listObj = new Object();
+  
+  // custom callbacks
+  listObj.pregressChanged = function(aCurTotalProgress, aMaxTotalProgress) { }  
+  listObj.onStart = function() { }  
+  listObj.onFinish = function() { }  
+  listObj.onOverallFinish = function() { }  
+  
+  listObj.wpl = Components.interfaces.nsIWebProgressListener;
+  listObj.QueryInterface = function(aIID) {
+    if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
+      aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
+      aIID.equals(Components.interfaces.nsIXULBrowserWindow) ||
+      aIID.equals(Components.interfaces.nsISupports))
+      return this;
+    throw Components.results.NS_NOINTERFACE;
+  }
+
+  listObj.onStateChange = function(aProgress, aRequest, aFlag, aStatus) {
+    if (aFlag & listObj.wpl.STATE_REDIRECTING) {
+      listObj.onStart()
+    }  
+    if (aFlag & listObj.wpl.STATE_START) {
+      listObj.onStart()
+    } else {
+      if (aFlag & listObj.wpl.STATE_STOP) {
+        if ( aFlag & listObj.wpl.STATE_IS_WINDOW ) {
+          // This fires when ALL load finish
+          listObj.onFinish()
+        }
+        if ( aFlag & listObj.wpl.STATE_IS_NETWORK ) {
+          // Fires when ALL load are REALLY over,
+          // do something "final" here
+          listObj.onOverallFinish()
+        } else {
+        // This fires when a load finishes
+        }
+      }
+    }
+    return 0;
+  }
+  // This fires when the location bar changes i.e load event is confirmed
+  // or when the user switches tabs
+  listObj.onLocationChange = function(aProgress, aRequest, aURI) {
+  // do whatever you want to do
+    return 0;
+  }
+  // For definitions of the remaining functions see XulPlanet.com
+  listObj.onProgressChange = function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) { 
+    listObj.pregressChanged(aCurTotalProgress, aMaxTotalProgress)     
+  };
+//  listObj.onProgressChange = function() { return 0 };
+ 
+  listObj.onStatusChange = function() { return 0 };
+  listObj.onSecurityChange = function() { return 0 };
+  listObj.onLinkIconAvailable = function() { return 0 };
+  
+  return listObj;
+}
+
+
+var attachObject = function(tag, propertyName, object)
+{
+  if (!tag.getAttribute('xuljet:attachedObjects'))
+    tag.setAttribute('xuljet:attachedObjects', exports.id());
+  if (!tag.attachedObjects) tag.attachedObjects = {};
+  tag.attachedObjects[propertyName] = object;
+  return tag;
+}
 
 var collectAttachedObjects = function(node, objects)
 {
@@ -842,13 +1041,13 @@ var collectAttachedObjects = function(node, objects)
   var child = node.firstChild;
   while (child) {
     if (child.nodeType === 1) {
-      collectAttachedObjects(child, collectedObjects);
+      collectAttachedObjects(child, collectedObjects)
     }
     child = child.nextSibling;
   }
   
   return collectedObjects;
-};
+}
 
 var setAttachedObjects = function(node, objects)
 {
@@ -856,7 +1055,7 @@ var setAttachedObjects = function(node, objects)
   if (objId)
   {
     node.attachedObjects = objects[objId];
-    var propertyBinding = node.attachedObjects.propertyBinding;
+    var propertyBinding = node.attachedObjects['propertyBinding'];
     if (propertyBinding)
       propertyBinding.object[propertyBinding.property] = node;
   }
@@ -864,11 +1063,45 @@ var setAttachedObjects = function(node, objects)
   var child = node.firstChild;
   while (child) {
     if (child.nodeType === 1) {
-      setAttachedObjects(child, objects);
+      setAttachedObjects(child, objects)
     }
     child = child.nextSibling;
   }
-};
+}
+
+var replaceComponentInDocument = function(aDocument, id, newNodes)
+{  
+  var startNode = aDocument.getElementById('__start_'+id);
+  var endNode = aDocument.getElementById('__end_'+id);
+  
+  var currentNode = startNode;
+  var parentNode = currentNode.parentNode;  
+  
+  while (currentNode.nextSibling && (currentNode.nextSibling != endNode))
+  {
+    parentNode.removeChild(currentNode.nextSibling);
+  }
+  
+  newNodes.forEach(function(node) {
+    var clonedNode = node.cloneNode(true);
+    var attachments = collectAttachedObjects(node);
+    setAttachedObjects(clonedNode, attachments);  
+    parentNode.insertBefore(clonedNode, endNode);  
+  });
+   
+  startNode.parentNode.removeChild(startNode);
+  endNode.parentNode.removeChild(endNode);
+}
+
+var replaceBodyInDocument = function(aDocument, newNodes)
+{    
+  newNodes.forEach(function(node) {
+    var clonedNode = node.cloneNode(true);
+    var attachments = collectAttachedObjects(node);
+    setAttachedObjects(clonedNode, attachments);  
+    aDocument.body.appendChild(clonedNode);  
+  });
+}
 
 var processFormNode = function(node, formNodes)
 {
@@ -886,13 +1119,13 @@ var processFormNode = function(node, formNodes)
       formNodes.push(node); 
       break;
     default: break;
-  }
+  };
   var children = node.childNodes;
   for (var i = 0; i < children.length; i++) 
   {
-    processFormNode(children[i], formNodes);
+    processFormNode(children[i], formNodes)
   }  
-}; 
+}  
 
 var processFormInDocument = function(aDocument, id, pushToReceiver)
 {  
@@ -902,7 +1135,7 @@ var processFormInDocument = function(aDocument, id, pushToReceiver)
   var currentNode = startNode;
   var parentNode = currentNode.parentNode;  
   
-  var formNodes = [];
+  var formNodes = new Array();
   
   while (currentNode && (currentNode != endNode))
   {
@@ -910,8 +1143,7 @@ var processFormInDocument = function(aDocument, id, pushToReceiver)
     currentNode = currentNode.nextSibling;
   }
   
-  var result = {};
-  var collection, index;
+  var result = {}
   
   formNodes.forEach(function(node) {
     var name = node.getAttribute('xuljet:name');
@@ -928,38 +1160,23 @@ var processFormInDocument = function(aDocument, id, pushToReceiver)
         val = node.dateValue; 
         break;
       case 'menulist': 
-        if (node.getAttribute('editable')) {
+        if (node.getAttribute('editable'))
+        {
           val = node.value;
-        } else {
-          if (node.attachedObjects) {
-            collection = node.attachedObjects.attachedObject;
-            if (collection)
-            {
-              if (node.selectedItem)
-              {
-                index = node.selectedItem.getAttribute('xuljet:value');
-                if (collection)
-                  val = collection[parseInt(index, 10)]; 
-                else
-                  val = index;
-              } else
-                val = node.value;
-            }
-          }
-        }
-        break;
+          break;
+        } // else continue as with radiogroup!
       case 'radiogroup': 
         if (node.attachedObjects) {
-          collection = node.attachedObjects.attachedObject;
+          var collection = node.attachedObjects['attachedObject'];
           if (collection)
           {
             if (node.selectedItem)
             {
-              index = node.selectedItem.getAttribute('xuljet:value');
+              var index = node.selectedItem.getAttribute('xuljet:value')
               if (collection)
-                val = collection[parseInt(index, 10)]; 
+                val = collection[parseInt(index, 10)]  
               else
-                val = index;
+                val = index
             } else
               val = node.value;
           }
@@ -969,16 +1186,16 @@ var processFormInDocument = function(aDocument, id, pushToReceiver)
       case 'richlistbox': 
         if (node.attachedObjects) {
           var selectedCount = node.selectedCount;
-          collection = node.attachedObjects.attachedObject;
+          var collection = node.attachedObjects['attachedObject'];
           if (collection) {
             val = [];
             for (var a=0; a<selectedCount; a++)
             {
-              index = node.getSelectedItem(a).getAttribute('xuljet:value');
+              var index = node.getSelectedItem(a).getAttribute('xuljet:value');
               if (collection)
-                val.push(collection[parseInt(index, 10)]) ; 
+                val.push(collection[parseInt(index, 10)])  
               else
-                val.push(index);
+                val.push(index)
             }
           }
         }
@@ -987,25 +1204,26 @@ var processFormInDocument = function(aDocument, id, pushToReceiver)
         val = node.value;
     }
     result[name] = val;
-    if (pushToReceiver && node.attachedObjects && node.attachedObjects.formReceiver)
+    if (pushToReceiver && node.attachedObjects && node.attachedObjects['formReceiver'])
     {
-      var array = node.attachedObjects.formReceiver;
-      if (array.length == 1) {
-        alert(node.getAttribute('xuljet:name'));
-        exports.inspect(array[0]);
+      var array = node.attachedObjects['formReceiver'];
+      if (array.length == 1) 
+      {
+        alert(node.getAttribute('xuljet:name'))
+        exports.inspect(array[0])
       }
       var splitted = array[1].split('.');
       var currentReceiver = array[0];
       var lastProperty = splitted.pop();
       splitted.forEach(function (each) {
-        currentReceiver = currentReceiver[each];
-      });
+        currentReceiver = currentReceiver[each]
+      })   
       
       currentReceiver[lastProperty] = val;
-    } });
+    } })
     
   return result;      
-};
+}
 
 var reloadFormInDocument = function(aDocument, id)
 {  
@@ -1015,7 +1233,7 @@ var reloadFormInDocument = function(aDocument, id)
   var currentNode = startNode;
   var parentNode = currentNode.parentNode;  
   
-  var formNodes = [];
+  var formNodes = new Array();
   
   while (currentNode && (currentNode != endNode))
   {
@@ -1024,19 +1242,19 @@ var reloadFormInDocument = function(aDocument, id)
   }
     
   formNodes.forEach(function(node) {
-    var val;
+    var val = undefined;
 
-    if (node.attachedObjects && node.attachedObjects.formReceiver)
+    if (node.attachedObjects && node.attachedObjects['formReceiver'])
     {
-      var array = node.attachedObjects.formReceiver;
+      var array = node.attachedObjects['formReceiver'];
       var splitted = array[1].split('.');
       val = array[0];
       splitted.forEach(function (each) {
-        val = val[each];
-      });
+        val = val[each]
+      })    
     }  
     
-    var safeVal = (val === undefined || val === null) ? '' : val;
+    var safeVal = (val == undefined || val == null) ? '' : val;
     
     var name = node.getAttribute('xuljet:name');
       switch (node.tagName)
@@ -1091,270 +1309,8 @@ var reloadFormInDocument = function(aDocument, id)
   */    default: 
           node.value = val;
       }
-    });
-};
-
-
-var replaceComponentInDocument = function(aDocument, id, newNodes)
-{  
-  var startNode = aDocument.getElementById('__start_'+id);
-  var endNode = aDocument.getElementById('__end_'+id);
-  
-  var currentNode = startNode;
-  var parentNode = currentNode.parentNode;  
-  
-  while (currentNode.nextSibling && (currentNode.nextSibling != endNode))
-  {
-    parentNode.removeChild(currentNode.nextSibling);
-  }
-  
-  newNodes.forEach(function(node) {
-    var clonedNode = node.cloneNode(true);
-    var attachments = collectAttachedObjects(node);
-    setAttachedObjects(clonedNode, attachments);  
-    parentNode.insertBefore(clonedNode, endNode);  
-  });
-   
-  startNode.parentNode.removeChild(startNode);
-  endNode.parentNode.removeChild(endNode);
-};
-
-var replaceBodyInDocument = function(aDocument, newNodes)
-{    
-  newNodes.forEach(function(node) {
-    var clonedNode = node.cloneNode(true);
-    var attachments = collectAttachedObjects(node);
-    setAttachedObjects(clonedNode, attachments);  
-    aDocument.body.appendChild(clonedNode);  
-  });
-};
-
-exports.Component.prototype.str = function(aStringName)
-{
-  if (!aStringName) return '';
-  if (!exports.locale.stringbundle || !this.localesPackageName)
-    return aStringName;
-
-  var stringBundle = getStringBundle(exports.locale.name, exports.locale.fallbacklocale, this.localesPackageName);
-
-  if (!stringBundle)
-    return aStringName;
-
-  if (!stringBundle.getAttribute('src'))
-    return aStringName;
-  
-  try {
-    if (arguments.length == 1)
-      return stringBundle.getString(aStringName);
-
-    var args = Array.prototype.slice.call(arguments);
-    args.shift();
-    
-    return stringBundle.getFormattedString(aStringName, args);
-  } catch (e) {
-    return aStringName;
-  }
-};
-
-exports.Component.prototype.lstr = function(aStringName)
-{
-  return this.str.apply(this, arguments) + ':';
-};
-
-exports.Component.prototype.render = function(xul)
-{
-};
-
-exports.Component.prototype.finishRendering = function()
-{
-};
-
-exports.Component.prototype.finishRenderingWithChildren = function()
-{
-  this.finishRendering();
-  this.children().forEach(function (each) {
-    each.finishRenderingWithChildren();});
-};
-
-exports.Component.prototype.rendered = function()
-{
-  this.clearClosures();
-  var xul = new exports.XULCanvas(null, this); 
-  xul.sectionStart(this.id);
-  this.render(xul);
-  xul.sectionEnd(this.id);
-  var roots = xul.roots();
-  roots.isElementsCollection = true;
-  return roots;
-};  
-  
-exports.Component.prototype.refresh = function()
-{
-  var roots = this.rendered();
-  replaceComponentInDocument(this.window.document, this.id, roots);
-  this.finishRenderingWithChildren();
-};
-  
-exports.Component.prototype.replace = function(oldComponent)
-{
-  var roots = this.rendered();
-  oldComponent.clearClosures();
-  replaceComponentInDocument(this.window.document, oldComponent.id, roots);
-  this.finishRenderingWithChildren();
-};
-  
-exports.Component.prototype.remove = function()
-{
-  this.clearClosures();
-  replaceComponentInDocument(this.window.document, this.id, []);
-};
-  
-exports.Component.prototype.refreshSection = function(id, aClosure )
-{
-  var boundClosure = exports.bind(aClosure, this);
-  var xul = new exports.XULCanvas(null, this); 
-  xul.sectionStart(id);
-  boundClosure(xul);
-  xul.sectionEnd(id);
-  var roots = xul.roots();
-  roots.isElementsCollection = true;
-  replaceComponentInDocument(this.window.document, id, roots);
-};
-  
-exports.Component.prototype.beMainWindowComponent = function()
-{
-  this.id = 'mainWindowComponent';
-  this.refresh();
-};
-  
-exports.Component.prototype.formValue = function(formId)
-{
-  return processFormInDocument(this.window.document, formId, false); 
-};
-
-exports.Component.prototype.processForm = function(formId)
-{
-  return processFormInDocument(this.window.document, formId, true); 
-}; 
-
-exports.Component.prototype.reloadForm = function(formId)
-{
-  return reloadFormInDocument(this.window.document, formId); 
-};  
-  
-exports.Component.prototype.appendForm = function(formId, target)
-{
-  var obj = target? target : this;
-  exports.extend(obj, this.formValue(formId));
-};
-  
-exports.Component.prototype.print = function(aCanvas, modifyPrintSettingsCallback)
-{
-  if (printing.gPrintFrameId)
-    exports.Window.main.rootNode().removeChild(exports.Window.main.document.getElementById(printing.gPrintFrameId));
-
-  var frameId = exports.id();
-  var frame = document.createElementNS(exports.XUL_NS, 'iframe');
-  frame.setAttribute('type', 'content-primary');
-  frame.setAttribute('id', frameId);
-  frame.setAttribute('width', 1);
-  frame.setAttribute('height', 1);
-  frame.setAttribute('src', exports.baseURI+'templates/empty.html');
-  var clone = frame.cloneNode(true);
-  exports.Window.main.rootNode().appendChild(clone);
-  
-  replaceBodyInDocument(clone.contentWindow.document, aCanvas.roots());
-  
-  printing.utils.print(clone.contentWindow, modifyPrintSettingsCallback);
-  
-  printing.gPrintFrameId = frameId;
-  clone.hidden = true;
-  // NOTE: mozilla bug, if you delete iframe here, printing may not happen
-  //    this.window.rootNode().removeChild(clone);  
-};
-  
-exports.Component.prototype.alert = function(message)
-{
-  this.window.alert(message);
-};
-  
-exports.Component.prototype.prompt = function(text, value)
-{
-  return this.window.prompt(text, value);
-};
-
-exports.Component.prototype.confirm = function(text)
-{
-  return this.window.confirm(text);
-};
-
-exports.defaultProgressListener = function()
-{
-  // from http://mdn.beonex.com/en/XUL_Questions_and_Answers#What_is_an_example_of_addProgressListener.3f
-  // use:
-  //   var listObj = xuljet.defaultProgressListener();
-  //   listObj.onFinish = function() {alert("finish")}
-  //     browserObj.addProgressListener( listObj, Components.interfaces.nsIWebProgress.NOTIFY_STATE_WINDOW );
-
-  var listObj = {};
-  
-  // custom callbacks
-  listObj.pregressChanged = function(aCurTotalProgress, aMaxTotalProgress) { };  
-  listObj.onStart = function() { };
-  listObj.onFinish = function() { };
-  listObj.onOverallFinish = function() { };
-  
-  listObj.wpl = Components.interfaces.nsIWebProgressListener;
-  listObj.QueryInterface = function(aIID) {
-    if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
-      aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-      aIID.equals(Components.interfaces.nsIXULBrowserWindow) ||
-      aIID.equals(Components.interfaces.nsISupports))
-      return this;
-    throw Components.results.NS_NOINTERFACE;
-  };
-
-  listObj.onStateChange = function(aProgress, aRequest, aFlag, aStatus) {
-    if (aFlag & listObj.wpl.STATE_REDIRECTING) {
-      listObj.onStart();
-    }  
-    if (aFlag & listObj.wpl.STATE_START) {
-      listObj.onStart();
-    } else {
-      if (aFlag & listObj.wpl.STATE_STOP) {
-        if ( aFlag & listObj.wpl.STATE_IS_WINDOW ) {
-          // This fires when ALL load finish
-          listObj.onFinish();
-        }
-        if ( aFlag & listObj.wpl.STATE_IS_NETWORK ) {
-          // Fires when ALL load are REALLY over,
-          // do something "final" here
-          listObj.onOverallFinish();
-        } else {
-        // This fires when a load finishes
-        }
-      }
-    }
-    return 0;
-  };
-  // This fires when the location bar changes i.e load event is confirmed
-  // or when the user switches tabs
-  listObj.onLocationChange = function(aProgress, aRequest, aURI) {
-  // do whatever you want to do
-    return 0;
-  };
-  // For definitions of the remaining functions see XulPlanet.com
-  listObj.onProgressChange = function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) { 
-    listObj.pregressChanged(aCurTotalProgress, aMaxTotalProgress);   
-  };
-//  listObj.onProgressChange = function() { return 0 };
- 
-  listObj.onStatusChange = function() { return 0; };
-  listObj.onSecurityChange = function() { return 0; };
-  listObj.onLinkIconAvailable = function() { return 0; };
-  
-  return listObj;
-};
+    })
+}
 
 // Window
 
@@ -1367,10 +1323,10 @@ exports.Window = function(component, title)
     newWin.setTitle(title);
     component.setWindow(newWin);
     var roots = component.rendered();
-    replaceComponentInDocument(newWin.document, 'windowComponent', roots);
+    replaceComponentInDocument(newWin.document, 'windowComponent', roots)
     component.finishRenderingWithChildren();
-  };
-};
+  } 
+}
 
 exports.Window.prototype.open = function()
 {
@@ -1388,19 +1344,19 @@ exports.Window.prototype.open = function()
 */
   var windowWatcher = Components.classes['@mozilla.org/embedcomp/window-watcher;1'].getService(Components.interfaces.nsIWindowWatcher); 
   var newWindow = windowWatcher.openWindow(exports.Window.main, 'empty.xul', '_blank', 'chrome',null); 
-  newWindow.__param_onWindowOpended = this.onWindowOpened;
+  newWindow['__param_onWindowOpended'] = this.onWindowOpened;
   return newWindow;
-};
+}
 
 exports.Window.prototype.setTitle = function(aString)
 {
   this.document.title = aString;
-};
+}
   
 exports.Window.prototype.rootNode = function()
 {
   return this.document.getElementsByTagName('window')[0];
-};
+}
 
 exports.Dialog = function(component, title)
 {
@@ -1411,10 +1367,10 @@ exports.Dialog = function(component, title)
     newWin.setTitle(title);
     component.setWindow(newWin);
     var roots = component.rendered();
-    replaceComponentInDocument(newWin.document, 'windowComponent', roots);
+    replaceComponentInDocument(newWin.document, 'windowComponent', roots)
     component.finishRenderingWithChildren();
-  };
-};
+  }  
+}
 exports.inherits(exports.Dialog, exports.Window);
 
 exports.Dialog.prototype.open = function()
@@ -1423,7 +1379,7 @@ exports.Dialog.prototype.open = function()
                 null,
                 this.onDialogOpened,
                 this.actions);
-};
+}
 
 exports.config = {};
 
@@ -1461,17 +1417,16 @@ exports.config.get = function (name, defaultValue)
           var str = exports.config.preferencesBranch.getComplexValue(name, Components.interfaces.nsISupportsString);
           return str.data;
       } catch (e) {
-        exports.config.set(name, defaultValue);
+        exports.config.set(name, defaultValue)    
         return defaultValue;
       }
-      break;
     case 64:
       return exports.config.preferencesBranch.getIntPref(name);
     case 128:
       return exports.config.preferencesBranch.getBoolPref(name);
     default: break;
   }
-  exports.config.set(name, defaultValue);
+  exports.config.set(name, defaultValue)    
   return defaultValue;
 };
 
@@ -1479,11 +1434,11 @@ exports.config.save = function()
 {
   var prefService = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefService);
   prefService.savePrefFile(null);
-};
+}
 
 exports.getContents = function(aURI, charset){
   if( !charset ) {
-    charset = 'UTF-8';
+    charset = 'UTF-8'
   }
   var ioService=Components.classes['@mozilla.org/network/io-service;1']
     .getService(Components.interfaces.nsIIOService);
@@ -1503,7 +1458,7 @@ exports.getContents = function(aURI, charset){
   scriptableStream.close();
   input.close();
   return unicodeConverter.ConvertToUnicode(str);
-};
+}
 
 exports.homeDir = function()
 {
@@ -1511,14 +1466,14 @@ exports.homeDir = function()
                      .getService(Components.interfaces.nsIProperties);   
   var homeDirFile = dirService.get('Home', Components.interfaces.nsIFile); // returns an nsIFile object  
   return homeDirFile.path;
-};
+}
 
 exports.isJitEnabled = function()
 {
   var prefs = Components.classes['@mozilla.org/preferences-service;1']
                 .getService(Components.interfaces.nsIPrefService).getBranch('javascript.options.jit.');
   return prefs.getBoolPref('content'); 
-};
+}
 
 exports.systemPopup = function(title, text) 
 {  
@@ -1529,7 +1484,7 @@ exports.systemPopup = function(title, text)
   } catch(e) {  
     // prevents runtime error on platforms that don't implement nsIAlertsService  
   }  
-};  
+}  
 
 exports.urlExists = function(anURI)
 {
@@ -1548,8 +1503,13 @@ exports.urlExists = function(anURI)
       return false;
     throw (e);
   }
-  return true;
-};
+  return true 
+}
+
+var localeURI = function(packageName, localeName)
+{
+  return exports.localesURI + packageName + '.' + localeName + '.txt'
+}
 
 var parseXML = function(sXML) 
 {
@@ -1557,24 +1517,53 @@ var parseXML = function(sXML)
     sXML = sXML.replace(/<(\/?)svg:/g, '<$1').replace('xmlns:svg', 'xmlns');
   }
 
-  var out, dXML;
+  var out;
   try {
-    dXML = new DOMParser();
+    var dXML = new DOMParser();
     dXML.async = false;
-  } catch(e1) { 
+  } catch(e) { 
     throw new Error("XML Parser could not be instantiated"); 
-  }
+  };
   try {
     if(dXML.loadXML) 
-      out = (dXML.loadXML(sXML)) ? dXML : false;
+      out = (dXML.loadXML(sXML))?dXML:false;
     else 
       out = dXML.parseFromString(sXML, "text/xml");
   }
-  catch(e2) { 
-    throw new Error("Error parsing XML string"); 
-  }
+  catch(e) { throw new Error("Error parsing XML string"); };
   return out;
 };
+
+
+var getStringBundle = function(localeName, fallbackLocale, packageName)
+{
+  var currentLocale = localeName;
+  var bundleId = '__' + packageName + '_stringbundle';
+  var mainWindow = exports.Window.main;
+  if (!mainWindow)
+    mainWindow = window;
+  
+  var stringBundle = mainWindow.document.getElementById(bundleId)
+  if (stringBundle)
+    return stringBundle;    
+    
+  if (!exports.urlExists(localeURI(packageName, currentLocale)))
+  {
+    currentLocale = fallbackLocale;
+    if (!exports.urlExists(localeURI(packageName, currentLocale)))
+      currentLocale = undefined;
+  }
+  
+  var finalURI = currentLocale ? localeURI(packageName, currentLocale) : ''
+    
+  var node = exports.Window.main.document.createElementNS(exports.XUL_NS, 'stringbundle');
+  node.setAttribute('id', bundleId);
+  node.setAttribute('src', finalURI);
+  stringBundle = node.cloneNode(true);
+  exports.Window.main.rootNode().appendChild(stringBundle);
+  
+  return stringBundle
+}
 
 var setupLocale = function()
 {
@@ -1590,20 +1579,20 @@ var setupLocale = function()
   exports.locale = {
     name: messagesLocale, 
     info: {
-        messages: messagesLocale, 
-        time: localeInfo.getCategory('NSILOCALE_TIME'), 
-        numericc: localeInfo.getCategory('NSILOCALE_NUMERIC'), 
-        monetary: localeInfo.getCategory('NSILOCALE_MONETARY'), 
-        ctype: localeInfo.getCategory('NSILOCALE_CTYPE'), 
-        collate: localeInfo.getCategory('NSILOCALE_COLLATE')
+      messages: messagesLocale, 
+      time: localeInfo.getCategory('NSILOCALE_TIME'), 
+      numericc: localeInfo.getCategory('NSILOCALE_NUMERIC'), 
+      monetary: localeInfo.getCategory('NSILOCALE_MONETARY'), 
+      ctype: localeInfo.getCategory('NSILOCALE_CTYPE'), 
+      collate: localeInfo.getCategory('NSILOCALE_COLLATE'),
       },
     collator: Components.classes['@mozilla.org/intl/collation-factory;1']
         .getService(Components.interfaces.nsICollationFactory)
         .CreateCollation(localeService.getApplicationLocale()),
     stringbundle: stringBundle,
-    fallbacklocale: fallbackLocale
-  };
-};
+    fallbacklocale: fallbackLocale,
+  }
+}
 
 exports.makeTagHelpers(exports.XULCanvas, exports.XUL_NS, '');
 exports.makeTagHelpers(exports.HTMLCanvas, exports.HTML_NS, 'html:');
@@ -1615,12 +1604,12 @@ var onMainWindowOpened = function(loadEvt)
   exports.Window.main = window;
   if(typeof(main) !== 'undefined')       // use this form to prevent warning
   {
-    var cmdLine = window['arguments'][0];
+    var cmdLine = window.arguments[0];
     cmdLine = cmdLine.QueryInterface(Components.interfaces.nsICommandLine);
     setupLocale();
     main(cmdLine);  
   }
-};
+}
 
 window.addEventListener('load', onMainWindowOpened, false);
 
