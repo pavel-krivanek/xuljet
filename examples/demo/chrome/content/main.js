@@ -1,0 +1,1 @@
+var demo = require('pages/main');function main(){  var rootComponent = new demo.Main(window);  window.setTitle('XULJet Demo');  rootComponent.beMainWindowComponent();  }

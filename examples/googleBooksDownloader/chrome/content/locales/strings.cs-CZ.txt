@@ -1,0 +1,16 @@
+# Czech translations
+
+applicationTitle = Google Books Downloader
+
+downloadBook = Stáhni knihu
+go = Přejít
+selectDirectory = Vyber adresář
+step = krok
+delay = zpoždění
+
+status.pageContainsBook = stránka obsahuje knihu
+status.noBookDetected = nenalezena žádná kniha
+status.loading = nahrávám
+status.finished = stahování dokončeno
+status.failed = stahování selhalo
+status.downloading = stahuji...

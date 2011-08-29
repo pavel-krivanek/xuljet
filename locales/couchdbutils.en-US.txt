@@ -1,0 +1,14 @@
+# Czech tranlations for package couchdbutils
+
+CouchDBLogin.server = Server
+CouchDBLogin.database = Database
+CouchDBLogin.user = User
+CouchDBLogin.password = Password			
+CouchDBLogin.login = Login
+CouchDBLogin.administer = Manage database
+CouchDBLogin.dbListTooltip = The list of databases is available only if login information are valid
+
+CouchDBAdministration.back = ⬅ Back
+CouchDBAdministration.database = Database
+CouchDBAdministration.create = Create database
+CouchDBAdministration.initialize = Initialize views

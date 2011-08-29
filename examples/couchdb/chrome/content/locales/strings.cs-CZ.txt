@@ -1,0 +1,40 @@
+# Czech translations
+
+applicationTitle = Adresy
+
+statusbar.ready = Připraven
+
+address = Adresa
+postage = Poštovné
+date = Datum
+
+company = firma
+departure = oddělení
+name = jméno
+street = ulice
+city = město
+zip = PSČ
+state = stát
+note = poznámka
+
+context.modify = upravit
+context.remove = odstranit
+
+save = Uložit
+saveAsNew = Uložit jako nový
+remove = Odstranit
+print = Tiskni
+
+forDate = pro datum
+forAddress = pro adresu
+
+availableAddresses = Dostupné adresy
+searchText = hledaný text (min. 3 znaky)	
+
+postage.dontSave = neukládat
+postage.inland10 = Dopis do 50 g tuzemsko (10 Kč)
+postage.inland14 = Dopis do 100 g tuzemsko (14 Kč)
+postage.inland26 = Doporučený dopis do 50 g tuzemsko (26 Kč)
+postage.inland34 = Doporučený dopis do 100 g tuzemsko (34 Kč)
+postage.outland20 = Dopis do 20 g zahraničí (20 Kč)
+postage.outland26 = Dopis do 50 g zahraničí  (26 Kč)

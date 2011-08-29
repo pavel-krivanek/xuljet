@@ -1,0 +1,16 @@
+# English translations
+
+applicationTitle = Google Books Downloader
+
+downloadBook = Download book
+go = Go
+selectDirectory = Select directory
+step = step
+delay = delay
+
+status.pageContainsBook = page contains book
+status.noBookDetected = no book detected
+status.loading = loading
+status.finished = download finished
+status.failed = download process failed
+status.downloading = downloading...
