@@ -1506,6 +1506,13 @@ exports.urlExists = function(anURI)
   return true 
 }
 
+exports.beep = function()
+{
+  var sound = Components.classes["@mozilla.org/sound;1"]
+  .createInstance(Components.interfaces.nsISound);
+  sound.beep();
+}
+
 var localeURI = function(packageName, localeName)
 {
   return exports.localesURI + packageName + '.' + localeName + '.txt'
