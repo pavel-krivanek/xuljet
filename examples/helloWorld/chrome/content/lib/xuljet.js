@@ -14,7 +14,7 @@ exports.MATH_NS = 'http://www.w3.org/1998/Math/MathML';
 
 /**
  * Get default chrome/content URI including slash
- * 
+ *  
  * XULJet internal method
  * 
  * @return {string} Default chrome/content URI 
