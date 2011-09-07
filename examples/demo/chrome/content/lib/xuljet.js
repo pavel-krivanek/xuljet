@@ -536,8 +536,6 @@ exports.processAttribute = function(aNode, key, value, aCanvas)
 
   if (key == 'link')
   {
-    var currentValue;
-    
     var splitted = value[1].split('.');
     var currentValue = value[0];
     splitted.forEach(function (each) {
