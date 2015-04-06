@@ -1,6 +1,9 @@
 XULJet 
 ======
 
+SEE: https://github.com/pavel-krivanek/xuljet/blob/wiki/ProjectHome.md
+
+
 XULJet is a JavaScript library that helps to create platform independent 
 desktop applications directly in JavaScript.
 
